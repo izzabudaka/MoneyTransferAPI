@@ -68,4 +68,12 @@ public class Database {
         PreparedStatement statement = conn.prepareStatement(createTable);
         updateStatement(statement);
     }
+
+    public static void insertIntoAccounts(int userId, double balance) throws SQLException {
+        String insertUser = "INSERT INTO ACCOUNTS VALUES (?,?)";
+        PreparedStatement statement = conn.prepareStatement(insertUser);
+        statement.setInt(1, userId);
+        statement.setDouble(2, balance);
+        updateStatement(statement);
+    }
 }

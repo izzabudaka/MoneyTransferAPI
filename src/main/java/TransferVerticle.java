@@ -33,6 +33,7 @@ public class TransferVerticle extends AbstractVerticle {
                             result.complete(transactionService.makeTransaction(transaction));
                         } catch (SQLException e) {
                             e.printStackTrace();
+                            logger.error(e);
                         }
                         String message = String.format("Transaction from: %d, to: %d, with amount: %d commited!",
                                 transaction.getSender(), transaction.getReceiver(), transaction.getAmount());
