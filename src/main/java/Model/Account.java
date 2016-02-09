@@ -1,5 +1,7 @@
 package Model;
 
+import Utility.AccountNotFoundException;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,28 +10,36 @@ import java.sql.SQLException;
  * Created by Home on 08/02/16.
  */
 public class Account {
-    private ResultSet accountInfo;
     private final int userId;
 
     public Account(int userId) throws SQLException {
-        this.userId = userId;
-        PreparedStatement statement = Database.getStatement("SELECT * FROM ACCOUNTS WHERE UserId = ?");
-        statement.setInt(1, userId);
-        accountInfo = Database.selectStatement(statement);
+        if(Exists()){
+            this.userId = userId;
+        } else {
+            throw new AccountNotFoundException(String.format("Account %d doesn't exist in the database!", userId));
+        }
     }
 
     public boolean Exists() throws SQLException {
-        return accountInfo.first();
+        PreparedStatement statement = Database.getStatement("SELECT COUNT(*) FROM ACCOUNTS WHERE UserId = ?");
+        statement.setInt(1, userId);
+        ResultSet count = Database.selectStatement(statement);
+        if(count.next())
+            return  count.getInt(1) == 1? true : false;
+        return false;
     }
 
     public double getBalance() throws SQLException {
         PreparedStatement statement = Database.getStatement("SELECT Balance FROM ACCOUNTS WHERE UserId = ?");
         statement.setInt(1, userId);
         ResultSet balance = Database.selectStatement(statement);
-        return balance.getDouble(0);
+        if(balance.next())
+            return balance.getDouble(0);
+        else
+            throw new AccountNotFoundException(String.format("Balance for user %d was not retrieved!", userId));
     }
 
-    public void setBalance(double change) throws SQLException {
+    public void changeBalance(double change) throws SQLException {
         double balance = getBalance() + change;
         PreparedStatement statement = Database.getStatement("UPDATE ACCOUNT Balance= ? WHERE UserId= ?");
         statement.setDouble(1, balance);

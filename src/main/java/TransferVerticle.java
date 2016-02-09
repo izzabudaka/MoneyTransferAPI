@@ -2,13 +2,13 @@
  * Created by Izz Abudaka on 07/02/16.
  */
 
-import Model.Transaction;
-import Service.TransactionService;
-import Service.TransactionServiceFactory;
+import Service.CommitTransactionService;
+import Service.CreateTransactionService;
+import Utility.CommitTransactionException;
+import Utility.CreateTransactionException;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.http.HttpServer;
-import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import org.apache.log4j.Logger;
 
@@ -21,27 +21,38 @@ public class TransferVerticle extends AbstractVerticle {
     public void start(Future<Void> fut) {
         HttpServer         server             = vertx.createHttpServer();
         Router             router             = Router.router(vertx);
-        TransactionService transactionService = TransactionServiceFactory.createTransactionService();
+        CommitTransactionService commitTransaction = new CommitTransactionService();
+        CreateTransactionService createTransaction = new CreateTransactionService();
 
-        router.post("/transfer").handler(routingContext -> {
-                    final CompletableFuture<String> result = new CompletableFuture<>();
-                    routingContext.request().bodyHandler(buffer -> {
-                        Transaction transaction = Json.decodeValue(buffer.toString(), Transaction.class);
-                        logger.debug(String.format("Transaction %d from: %d, to: %d, with amount: %d.\n",
-                                transaction.getId(), transaction.getSender(), transaction.getReceiver(), transaction.getAmount()));
-                        try {
-                            result.complete(transactionService.makeTransaction(transaction));
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                            logger.error(e);
-                        }
-                        String message = String.format("Transaction from: %d, to: %d, with amount: %d commited!",
-                                transaction.getSender(), transaction.getReceiver(), transaction.getAmount());
-                        logger.debug(message);
-                        routingContext.response().end(message);
-                    });
+        router.post("/transaction").handler(routingContext -> {
+            CompletableFuture<Integer> transactionId = new CompletableFuture<>();
+            routingContext.request().bodyHandler(buffer -> {
+                logger.debug(String.format("/transaction %s", buffer.toString()));
+                try {
+                    transactionId.complete(createTransaction.createTransaction(buffer.toString()));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    routingContext.response().setStatusCode(500);
+                    transactionId.completeExceptionally(new CreateTransactionException(e.getMessage()));
                 }
-        );
+                transactionId.thenAccept( x-> routingContext.response().end(String.valueOf(x)));
+            });
+        });
+
+        router.put("/transaction/:id").handler(routingContext -> {
+            final CompletableFuture<String> result = new CompletableFuture<>();
+            int transactionId = Integer.parseInt(routingContext.request().getParam("id"));
+            logger.debug(String.format("/transaction/:id with id %d", transactionId));
+            try {
+                result.complete(commitTransaction.commitTransaction(transactionId));
+            } catch (SQLException e) {
+                e.printStackTrace();
+                routingContext.response().setStatusCode(500);
+                result.completeExceptionally(new CommitTransactionException(e.getMessage()));
+            }
+            result.thenAccept( x-> routingContext.response().end(x));
+        });
+
         server.requestHandler(router::accept).listen(8080);
     }
 }

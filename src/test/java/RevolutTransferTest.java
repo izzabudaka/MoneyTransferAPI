@@ -26,6 +26,7 @@ public class RevolutTransferTest {
         Scanner sc = new Scanner(new FileReader("Users.txt"));
         while( sc.hasNextLine()){
             String[] user = sc.nextLine().split(" ");
+            logger.debug(String.format("Adding User %s, %s", user[0], user[1]));
             Database.insertIntoAccounts(Integer.parseInt(user[0]), Double.parseDouble(user[1]));
         }
     }

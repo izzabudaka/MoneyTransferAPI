@@ -11,12 +11,8 @@ public class RevolutTransfer {
     public static void main(String[] args) throws SQLException {
         BasicConfigurator.configure();
         Database.initialiseDatabase();
-        try {
-            Vertx vertx = Vertx.vertx();
-            vertx.deployVerticle(TransferVerticle.class.getName());
-        } finally {
-            //Database.terminateConnection();
-        }
 
+        Vertx vertx = Vertx.vertx();
+        vertx.deployVerticle(TransferVerticle.class.getName());
     }
 }
