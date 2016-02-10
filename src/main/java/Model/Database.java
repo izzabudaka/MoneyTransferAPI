@@ -16,14 +16,16 @@ public class Database {
     private static final String createAccountTableExpr =
             "CREATE TABLE ACCOUNTS"+
                     "( UserId INTEGER NOT NULL AUTO_INCREMENT," +
-                    "Balance INTEGER NOT NULL DEFAULT 0)";
+                    "Balance INTEGER NOT NULL DEFAULT 0," +
+                    "PRIMARY KEY (UserId))";
     private static final String createTransactionTableExpr =
             "CREATE TABLE TRANSACTIONS"+
             "( TransactionId INTEGER NOT NULL," +
             "State INTEGER NOT NULL DEFAULT 0," +
             "Sender INTEGER NOT NULL," +
             "Receiver INTEGER NOT NULL," +
-            "Amount DOUBLE NOT NULL)";
+            "Amount DOUBLE NOT NULL," +
+            "PRIMARY KEY (TransactionId) )";
     private static final String insertAccountExpr =
             "INSERT INTO ACCOUNTS VALUES (?,?)";
     private static final String insertTransactionExpr =
@@ -39,7 +41,7 @@ public class Database {
             e.printStackTrace();
             logger.error("Driver not Found!");
         }
-        conn = DriverManager.getConnection("jdbc:h2:~/revolut", "revolut", "");
+        conn = DriverManager.getConnection("jdbc:h2:~/Transfers1", "revolut", "");
         createAccountsTable();
         createTransactionsTable();
     }
@@ -60,7 +62,7 @@ public class Database {
         conn.close();
     }
 
-    public static ResultSet selectStatement(PreparedStatement statement){
+    public static ResultSet selectStatement(PreparedStatement statement) throws SQLException {
         ResultSet resultSet = null;
         try {
             logger.debug(String.format("Executing statement %s\n", statement));
@@ -73,16 +75,16 @@ public class Database {
         return resultSet;
     }
 
-    public static boolean updateStatement(PreparedStatement statement){
+    public static boolean updateStatement(PreparedStatement statement) throws SQLException {
         try {
             logger.debug(String.format("Executing statement %s\n", statement));
             statement.executeUpdate();
+            System.out.printf("Executing %s completed!\n", statement);
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.printf("Statement %s was not executed\n", statement);
             return false;
         }
-        System.out.printf("Executing %s completed!\n", statement);
         return true;
     }
 
@@ -101,6 +103,8 @@ public class Database {
         statement.setInt(1, userId);
         statement.setDouble(2, balance);
         updateStatement(statement);
+        statement.close();
+        conn.commit();
     }
 
     public static void insertIntoTransactions(int transactionId, int from, int to, double amount) throws SQLException {
@@ -111,5 +115,7 @@ public class Database {
         statement.setInt(4, to);
         statement.setDouble(5, amount);
         updateStatement(statement);
+        statement.close();
+        conn.commit();
     }
 }

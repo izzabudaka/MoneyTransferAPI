@@ -16,7 +16,7 @@ public class CreateTransactionService {
         Transaction transaction = Json.decodeValue(transactionDetails, Transaction.class);
         if(transaction.getAmount() <= 0)
             throw new CreateTransactionException(
-                    String.format("You cannot make a transaction with amount %d", transaction.getAmount()));
+                    String.format("You cannot make a transaction with amount %f", transaction.getAmount()));
         Database.insertIntoTransactions(transaction.getId(), transaction.getSender(),
                                         transaction.getReceiver(), transaction.getAmount());
         return transaction.getId();

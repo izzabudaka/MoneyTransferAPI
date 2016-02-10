@@ -73,10 +73,11 @@ public class Transaction {
         PreparedStatement statement = Database.getStatement(transactionStateExpr);
         statement.setInt(1, id);
         ResultSet state = Database.selectStatement(statement);
+        TransactionState stateResult = TransactionState.NOT_STARTED;
         if(state.next())
-            return TransactionState.values()[state.getInt(1)];
-        logger.error(String.format("An invalid state was reached with transaction %d!", id));
-        return TransactionState.NOT_STARTED;
+            stateResult = TransactionState.values()[state.getInt(1)];
+        statement.close();
+        return stateResult;
     }
 
     public int getSender(){
