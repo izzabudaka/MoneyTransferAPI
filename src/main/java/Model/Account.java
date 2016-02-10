@@ -12,6 +12,13 @@ import java.sql.SQLException;
 public class Account {
     private final int userId;
 
+    private final String updateBalanceExpr =
+            "UPDATE ACCOUNT Balance= ? WHERE UserId= ?";
+    private final String accountExistsExpr =
+            "SELECT COUNT(*) FROM ACCOUNTS WHERE UserId = ?";
+    private final String accountBalanceExpr =
+            "SELECT Balance FROM ACCOUNTS WHERE UserId = ?";
+
     public Account(int userId) throws SQLException {
         if(Exists()){
             this.userId = userId;
@@ -21,7 +28,7 @@ public class Account {
     }
 
     public boolean Exists() throws SQLException {
-        PreparedStatement statement = Database.getStatement("SELECT COUNT(*) FROM ACCOUNTS WHERE UserId = ?");
+        PreparedStatement statement = Database.getStatement(accountExistsExpr);
         statement.setInt(1, userId);
         ResultSet count = Database.selectStatement(statement);
         if(count.next())
@@ -30,7 +37,7 @@ public class Account {
     }
 
     public double getBalance() throws SQLException {
-        PreparedStatement statement = Database.getStatement("SELECT Balance FROM ACCOUNTS WHERE UserId = ?");
+        PreparedStatement statement = Database.getStatement(accountBalanceExpr);
         statement.setInt(1, userId);
         ResultSet balance = Database.selectStatement(statement);
         if(balance.next())
@@ -41,7 +48,7 @@ public class Account {
 
     public void changeBalance(double change) throws SQLException {
         double balance = getBalance() + change;
-        PreparedStatement statement = Database.getStatement("UPDATE ACCOUNT Balance= ? WHERE UserId= ?");
+        PreparedStatement statement = Database.getStatement(updateBalanceExpr);
         statement.setDouble(1, balance);
         statement.setInt(2, userId);
         Database.updateStatement(statement);

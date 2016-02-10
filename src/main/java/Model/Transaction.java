@@ -20,6 +20,13 @@ public class Transaction {
     private final double amount;
     private final int    id;
 
+    private final String transactionInfoExpr =
+            "SELECT Sender, Receiver, Amount FROM TRANSACTIONS WHERE TransactionId = ?";
+    private final String transactionExistsExpr =
+            "SELECT COUNT(*) FROM TRANSACTIONS WHERE TransactionId = ?";
+    private final String transactionStateExpr =
+            "SELECT State FROM TRANSACTIONS WHERE TransactionId = ?";
+
     public Transaction(int sender, int receiver, double amount){
         this.receiver = receiver;
         this.sender   = sender;
@@ -31,7 +38,7 @@ public class Transaction {
         this.id = id;
         if(Exists()){
             logger.debug(String.format("Transaction %d is valid!", id));
-            PreparedStatement statement = Database.getStatement("SELECT Sender, Receiver, Amount FROM TRANSACTIONS WHERE TransactionId = ?");
+            PreparedStatement statement = Database.getStatement(transactionInfoExpr);
             statement.setInt(1, id);
             ResultSet resultSet         = Database.selectStatement(statement);
             if(resultSet.next()){
@@ -54,7 +61,7 @@ public class Transaction {
     }
 
     public boolean Exists() throws SQLException {
-        PreparedStatement statement = Database.getStatement("SELECT COUNT(*) FROM TRANSACTIONS WHERE TransactionId = ?");
+        PreparedStatement statement = Database.getStatement(transactionExistsExpr);
         statement.setInt(1, id);
         ResultSet count = Database.selectStatement(statement);
         if(count.next())
@@ -63,8 +70,7 @@ public class Transaction {
     }
 
     public TransactionState getState() throws SQLException {
-        String getTransaction = "SELECT State FROM TRANSACTIONS WHERE TransactionId = ?";
-        PreparedStatement statement = Database.getStatement(getTransaction);
+        PreparedStatement statement = Database.getStatement(transactionStateExpr);
         statement.setInt(1, id);
         ResultSet state = Database.selectStatement(statement);
         if(state.next())

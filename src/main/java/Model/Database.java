@@ -11,6 +11,24 @@ public class Database {
     private final static Logger logger = Logger.getLogger(Database.class);
     private static Connection conn;
 
+    private static final String updateStateExpr =
+            "UPDATE TRANSACTIONS SET State=? WHERE TransactionId=?";
+    private static final String createAccountTableExpr =
+            "CREATE TABLE ACCOUNTS"+
+                    "( UserId INTEGER NOT NULL AUTO_INCREMENT," +
+                    "Balance INTEGER NOT NULL DEFAULT 0)";
+    private static final String createTransactionTableExpr =
+            "CREATE TABLE TRANSACTIONS"+
+            "( TransactionId INTEGER NOT NULL," +
+            "State INTEGER NOT NULL DEFAULT 0," +
+            "Sender INTEGER NOT NULL," +
+            "Receiver INTEGER NOT NULL," +
+            "Amount DOUBLE NOT NULL)";
+    private static final String insertAccountExpr =
+            "INSERT INTO ACCOUNTS VALUES (?,?)";
+    private static final String insertTransactionExpr =
+            "INSERT INTO TRANSACTIONS VALUES (?,?,?,?,?)";
+
     public static PreparedStatement getStatement(String query) throws SQLException {
         return conn.prepareStatement(query);
     }
@@ -32,8 +50,7 @@ public class Database {
 
     public static void commitTransaction(int transactionId) throws SQLException {
         conn.commit();
-        String commitTransaction  = "UPDATE TRANSACTIONS SET State=? WHERE TransactionId=?";
-        PreparedStatement statement = conn.prepareStatement(commitTransaction);
+        PreparedStatement statement = conn.prepareStatement(updateStateExpr);
         statement.setInt(1, TransactionState.COMMITED.getValue());
         statement.setInt(2, transactionId);
         updateStatement(statement);
@@ -70,35 +87,24 @@ public class Database {
     }
 
     private static void createAccountsTable() throws SQLException {
-        String createTable          = "CREATE TABLE ACCOUNTS"+
-                "( UserId INTEGER NOT NULL AUTO_INCREMENT," +
-                "Balance INTEGER NOT NULL DEFAULT 0)";
-        PreparedStatement statement = conn.prepareStatement(createTable);
+        PreparedStatement statement = conn.prepareStatement( createAccountTableExpr);
         updateStatement(statement);
     }
 
     private static void createTransactionsTable() throws SQLException {
-        String createTable          = "CREATE TABLE TRANSACTIONS"+
-                "( TransactionId INTEGER NOT NULL," +
-                "State INTEGER NOT NULL DEFAULT 0," +
-                "Sender INTEGER NOT NULL," +
-                "Receiver INTEGER NOT NULL," +
-                "Amount DOUBLE NOT NULL)";
-        PreparedStatement statement = conn.prepareStatement(createTable);
+        PreparedStatement statement = conn.prepareStatement(createTransactionTableExpr);
         updateStatement(statement);
     }
 
     public static void insertIntoAccounts(int userId, double balance) throws SQLException {
-        String insertUser           = "INSERT INTO ACCOUNTS VALUES (?,?)";
-        PreparedStatement statement = conn.prepareStatement(insertUser);
+        PreparedStatement statement = conn.prepareStatement(insertAccountExpr);
         statement.setInt(1, userId);
         statement.setDouble(2, balance);
         updateStatement(statement);
     }
 
     public static void insertIntoTransactions(int transactionId, int from, int to, double amount) throws SQLException {
-        String insertTransaction    = "INSERT INTO TRANSACTIONS VALUES (?,?,?,?,?)";
-        PreparedStatement statement = conn.prepareStatement(insertTransaction);
+        PreparedStatement statement = conn.prepareStatement(insertTransactionExpr);
         statement.setInt(1, transactionId);
         statement.setInt(2, TransactionState.STARTED.getValue());
         statement.setInt(3, from);
