@@ -11,7 +11,7 @@ import java.sql.SQLException;
 /**
  * Created by Home on 09/02/16.
  */
-public class CommitTransactionService {
+public class CommitTransactionService implements CommitTransaction {
     private final static Logger logger = Logger.getLogger(Database.class);
     private String message;
 

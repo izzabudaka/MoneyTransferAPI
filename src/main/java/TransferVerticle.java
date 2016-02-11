@@ -4,8 +4,6 @@
 
 import Service.CommitTransactionService;
 import Service.CreateTransactionService;
-import Utility.CommitTransactionException;
-import Utility.CreateTransactionException;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.http.HttpServer;
@@ -25,18 +23,23 @@ public class TransferVerticle extends AbstractVerticle {
         CreateTransactionService createTransaction = new CreateTransactionService();
 
         router.post("/transaction").handler(routingContext -> {
-            CompletableFuture<Integer> transactionId = new CompletableFuture<>();
+            CompletableFuture<String> transactionId = new CompletableFuture<>();
             routingContext.request().bodyHandler(buffer -> {
                 logger.debug(String.format("/transaction %s", buffer.toString()));
                 try {
-                    transactionId.complete(createTransaction.createTransaction(buffer.toString()));
+                    String result = String.format("Transaction: %d", createTransaction.createTransaction(buffer.toString()));
+                    transactionId.complete(result);
                 } catch (SQLException e) {
+                    logger.debug(e.getMessage());
                     e.printStackTrace();
-                    routingContext.response().setStatusCode(500);
-                    transactionId.completeExceptionally(new CreateTransactionException(e.getMessage()));
+                    transactionId.complete(e.getMessage());
                 }
-                transactionId.thenAccept( x-> routingContext.response().end(String.valueOf(x)));
             });
+            transactionId.thenAccept(x ->
+                routingContext.response()
+                .putHeader("content-length", String.valueOf(x.length()))
+                .end(String.valueOf(x))
+            );
         });
 
         router.put("/transaction/:id").handler(routingContext -> {
@@ -48,7 +51,7 @@ public class TransferVerticle extends AbstractVerticle {
             } catch (SQLException e) {
                 e.printStackTrace();
                 routingContext.response().setStatusCode(500);
-                result.completeExceptionally(new CommitTransactionException(e.getMessage()));
+                result.complete(e.getMessage());
             }
             result.thenAccept( x-> routingContext.response().end(x));
         });

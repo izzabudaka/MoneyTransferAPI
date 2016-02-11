@@ -17,6 +17,7 @@ public class Database {
             "CREATE TABLE ACCOUNTS"+
                     "( UserId INTEGER NOT NULL AUTO_INCREMENT," +
                     "Balance INTEGER NOT NULL DEFAULT 0," +
+                    "CONSTRAINT chk_balance CHECK (Balance >= 0)," +
                     "PRIMARY KEY (UserId))";
     private static final String createTransactionTableExpr =
             "CREATE TABLE TRANSACTIONS"+
@@ -25,6 +26,7 @@ public class Database {
             "Sender INTEGER NOT NULL," +
             "Receiver INTEGER NOT NULL," +
             "Amount DOUBLE NOT NULL," +
+            "CONSTRAINT chk_amount CHECK (Amount > 0)," +
             "PRIMARY KEY (TransactionId) )";
     private static final String insertAccountExpr =
             "INSERT INTO ACCOUNTS VALUES (?,?)";
@@ -41,7 +43,7 @@ public class Database {
             e.printStackTrace();
             logger.error("Driver not Found!");
         }
-        conn = DriverManager.getConnection("jdbc:h2:~/Transfers1", "revolut", "");
+        conn = DriverManager.getConnection("jdbc:h2:~/Transfer", "revolut", "");
         createAccountsTable();
         createTransactionsTable();
     }

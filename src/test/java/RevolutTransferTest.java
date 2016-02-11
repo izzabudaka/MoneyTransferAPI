@@ -1,7 +1,6 @@
 import Model.Account;
 import Model.Database;
-import Model.MockTransaction;
-import Utility.CreateTransactionException;
+import Model.SerializableTransaction;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.json.Json;
@@ -16,7 +15,8 @@ import java.io.FileReader;
 import java.sql.SQLException;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Home on 08/02/16.
@@ -25,28 +25,34 @@ public class RevolutTransferTest {
     private static Vertx vertx;
     private final static Logger logger = Logger.getLogger(RevolutTransferTest.class);
     static HttpClient client;
+    static Pattern transactionPattern;
 
-    private void completeRestCalls( Account user1, Account user2, double amount) throws SQLException, ExecutionException, InterruptedException {
-        final String json   = Json.encodePrettily(new MockTransaction(user1.getUserId(), user2.getUserId(), amount));
+    private void completeRestCalls( Account user1, Account user2, double amount) throws Exception {
+        final String json   = Json.encodePrettily(new SerializableTransaction(user1.getUserId(), user2.getUserId(), amount));
         final String length = Integer.toString(json.length());
-        final CompletableFuture<Integer> transactionId = new CompletableFuture<>();
+        final CompletableFuture<String> transactionId = new CompletableFuture<>();
         final CompletableFuture<String>  transactionResult = new CompletableFuture<>();
 
         client.post(8080, "localhost", "/transaction")
                 .putHeader("content-type", "application/json")
                 .putHeader("content-length", length)
-                .handler(response -> response.bodyHandler(body -> transactionId.complete(Integer.parseInt(body.toString()))))
-                .write(json).end();
+                .handler(response -> response.bodyHandler(body ->
+                        transactionId.complete(body.toString())))
+                .end(json);
 
-        transactionId.thenAccept( id -> {
-            logger.debug(String.format("Transaction id %d", id));
-            client.put(8080, "localhost", String.format("/transaction/%d", id))
-                    .handler( response -> response.bodyHandler( body -> transactionResult.complete(body.toString())))
-                    .end();
+        transactionId.thenAccept( transaction -> {
+            Matcher matcher = transactionPattern.matcher(transaction);
+            if(matcher.find()){
+                int id = Integer.parseInt(matcher.group(1));
+                logger.debug(transaction);
+                client.put(8080, "localhost", String.format("/transaction/%d", id))
+                .handler(response -> response.bodyHandler(body -> transactionResult.complete(body.toString())))
+                .end();
+            } else {
+                transactionResult.complete("Invalid Transaction");
+            }
         });
-
-        String result = transactionResult.get();
-        logger.debug(result);
+        logger.debug(transactionResult.get());
     }
     private static void deployVerticle() throws SQLException {
         BasicConfigurator.configure();
@@ -69,6 +75,7 @@ public class RevolutTransferTest {
         deployVerticle();
         populateUserDatabase();
         client = vertx.createHttpClient();
+        transactionPattern = Pattern.compile("Transaction: (0|[1-9][0-9]*)");
     }
 
     @AfterClass
@@ -77,7 +84,7 @@ public class RevolutTransferTest {
     }
 
     @Test
-    public void testSimpleTransfer() throws SQLException, ExecutionException, InterruptedException {
+    public void testSimpleTransfer() throws Exception {
         logger.debug("Starting testSimpleTransfer");
         double transactionAmount = 10.0;
         Account user1 = new Account(1);
@@ -90,18 +97,22 @@ public class RevolutTransferTest {
         assert( user2.getBalance() == user2Balance + transactionAmount);
     }
 
-    @Test(expected = CreateTransactionException.class)
-    public void transferInvalidAmount() throws SQLException, ExecutionException, InterruptedException {
+    @Test
+    public void transferInvalidAmount() throws Exception {
         logger.debug("Starting transferNoFunds");
         double transactionAmount = -2.0;
         Account user1 = new Account(3);
         Account user2 = new Account(2);
+        double user1Balance = user1.getBalance();
+        double user2Balance = user2.getBalance();
 
         completeRestCalls(user1, user2, transactionAmount);
+        assert( user1.getBalance() == user1Balance );
+        assert( user2.getBalance() == user2Balance );
     }
 
     @Test
-    public void transferNoFunds() throws SQLException, ExecutionException, InterruptedException {
+    public void transferNoFunds() throws Exception {
         logger.debug("Starting transferNoFunds");
         double transactionAmount = 20.0;
         Account user1 = new Account(5);
