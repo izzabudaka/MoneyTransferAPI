@@ -7,7 +7,7 @@ A RESTful API (including data model and the backing implementation) for money tr
 * Vert.x
 * JUnit
 * H2 in Memory Database
-* CompletableFutures
+* Maven
 
 #### TODO ####
 * Migrate to MongoDB and implement Paxos
