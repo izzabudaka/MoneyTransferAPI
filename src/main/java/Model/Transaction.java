@@ -36,7 +36,7 @@ public class Transaction {
 
     public Transaction(int id) throws SQLException {
         this.id = id;
-        if(Exists()){
+        if(exists()){
             logger.debug(String.format("Transaction %d is valid!", id));
             PreparedStatement statement = Database.getStatement(transactionInfoExpr);
             statement.setInt(1, id);
@@ -60,12 +60,12 @@ public class Transaction {
         this.id       = COUNTER.getAndIncrement();
     }
 
-    public boolean Exists() throws SQLException {
+    public boolean exists() throws SQLException {
         PreparedStatement statement = Database.getStatement(transactionExistsExpr);
         statement.setInt(1, id);
         ResultSet count = Database.selectStatement(statement);
         if(count.next())
-            return  count.getInt(1) == 1? true : false;
+            return  count.getInt(1) == 1;
         return false;
     }
 

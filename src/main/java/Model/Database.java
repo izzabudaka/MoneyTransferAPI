@@ -10,6 +10,7 @@ import java.sql.*;
 public class Database {
     private final static Logger logger = Logger.getLogger(Database.class);
     private static Connection conn;
+    private static boolean initialised = false;
 
     private static final String updateStateExpr =
             "UPDATE TRANSACTIONS SET State=? WHERE TransactionId=?";
@@ -37,15 +38,20 @@ public class Database {
         return conn.prepareStatement(query);
     }
     public static void initialiseDatabase() throws SQLException {
-        try {
-            Class.forName("org.h2.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            logger.error("Driver not Found!");
+        if(!initialised){
+            try {
+                Class.forName("org.h2.Driver");
+                conn = DriverManager.getConnection("jdbc:h2:~/Transfer", "revolut", "");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                logger.error("Driver not Found. Unrecoverable error - exiting");
+                System.exit(0);
+            }
+            createAccountsTable();
+            createTransactionsTable();
+        } else {
+            logger.debug("Database already initialised");
         }
-        conn = DriverManager.getConnection("jdbc:h2:~/Transfer", "revolut", "");
-        createAccountsTable();
-        createTransactionsTable();
     }
 
     public static void startTransaction() throws SQLException {
@@ -81,10 +87,10 @@ public class Database {
         try {
             logger.debug(String.format("Executing statement %s\n", statement));
             statement.executeUpdate();
-            System.out.printf("Executing %s completed!\n", statement);
+            logger.debug(String.format("Executing %s completed!\n", statement));
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.printf("Statement %s was not executed\n", statement);
+            logger.debug(String.format("Statement %s was not executed\n", statement));
             return false;
         }
         return true;

@@ -10,6 +10,7 @@ import java.sql.SQLException;
  * Created by Home on 08/02/16.
  */
 public class Account {
+    // Primary Key
     private final int userId;
 
     private final String updateBalanceExpr =
@@ -19,24 +20,21 @@ public class Account {
     private final String accountBalanceExpr =
             "SELECT Balance FROM ACCOUNTS WHERE UserId=?";
 
-    public Account(int userId) throws SQLException {
+    public Account(int userId) {
         this.userId = userId;
-        if(!Exists()){
-            throw new AccountNotFoundException(String.format("Account %d doesn't exist in the database!", userId));
-        }
     }
 
     public int getUserId(){
         return userId;
     }
 
-    public boolean Exists() throws SQLException {
+    public boolean exists() throws SQLException {
         PreparedStatement statement = Database.getStatement(accountExistsExpr);
         statement.setInt(1, userId);
         ResultSet count = Database.selectStatement(statement);
         boolean exists = false;
         if(count.next())
-            exists = count.getInt(1) == 1? true : false;
+            exists = count.getInt(1) == 1;
         statement.close();
         return exists;
     }

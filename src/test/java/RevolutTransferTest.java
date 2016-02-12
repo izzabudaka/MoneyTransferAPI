@@ -1,4 +1,5 @@
 import Model.Account;
+import Model.AccountFactory;
 import Model.Database;
 import Model.SerializableTransaction;
 import io.vertx.core.Vertx;
@@ -26,6 +27,7 @@ public class RevolutTransferTest {
     private final static Logger logger = Logger.getLogger(RevolutTransferTest.class);
     static HttpClient client;
     static Pattern transactionPattern;
+    static AccountFactory accountFactory;
 
     private void completeRestCalls( Account user1, Account user2, double amount) throws Exception {
         final String json   = Json.encodePrettily(new SerializableTransaction(user1.getUserId(), user2.getUserId(), amount));
@@ -76,6 +78,7 @@ public class RevolutTransferTest {
         populateUserDatabase();
         client = vertx.createHttpClient();
         transactionPattern = Pattern.compile("Transaction: (0|[1-9][0-9]*)");
+        accountFactory = new AccountFactory();
     }
 
     @AfterClass
@@ -87,8 +90,8 @@ public class RevolutTransferTest {
     public void testSimpleTransfer() throws Exception {
         logger.debug("Starting testSimpleTransfer");
         double transactionAmount = 10.0;
-        Account user1 = new Account(1);
-        Account user2 = new Account(2);
+        Account user1 = accountFactory.createAccount(1);
+        Account user2 = accountFactory.createAccount(2);
         double user1Balance = user1.getBalance();
         double user2Balance = user2.getBalance();
 
@@ -101,8 +104,8 @@ public class RevolutTransferTest {
     public void transferInvalidAmount() throws Exception {
         logger.debug("Starting transferNoFunds");
         double transactionAmount = -2.0;
-        Account user1 = new Account(3);
-        Account user2 = new Account(2);
+        Account user1 = accountFactory.createAccount(3);
+        Account user2 = accountFactory.createAccount(2);
         double user1Balance = user1.getBalance();
         double user2Balance = user2.getBalance();
 
@@ -115,8 +118,8 @@ public class RevolutTransferTest {
     public void transferNoFunds() throws Exception {
         logger.debug("Starting transferNoFunds");
         double transactionAmount = 20.0;
-        Account user1 = new Account(5);
-        Account user2 = new Account(6);
+        Account user1 = accountFactory.createAccount(5);
+        Account user2 = accountFactory.createAccount(6);
         double user1Balance = user1.getBalance();
         double user2Balance = user2.getBalance();
 

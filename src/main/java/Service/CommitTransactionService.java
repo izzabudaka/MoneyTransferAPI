@@ -1,9 +1,6 @@
 package Service;
 
-import Model.Account;
-import Model.Database;
-import Model.Transaction;
-import Model.TransactionState;
+import Model.*;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
@@ -14,6 +11,11 @@ import java.sql.SQLException;
 public class CommitTransactionService implements CommitTransaction {
     private final static Logger logger = Logger.getLogger(Database.class);
     private String message;
+    private final AccountFactory accountFactory;
+
+    public CommitTransactionService(){
+        accountFactory = new AccountFactory();
+    }
 
     private void setMessage(String message){
         this.message = message;
@@ -28,10 +30,10 @@ public class CommitTransactionService implements CommitTransaction {
             return message;
         }
 
-        Account sender   = new Account(transaction.getSender());
-        Account receiver = new Account(transaction.getReceiver());
+        Account sender   = accountFactory.createAccount(transaction.getSender());
+        Account receiver = accountFactory.createAccount(transaction.getReceiver());
 
-        if(sender.Exists() && receiver.Exists()){
+        if(sender.exists() && receiver.exists()){
             if(sender.getBalance() >= transaction.getAmount()) {
                 Database.startTransaction();
                 sender.changeBalance(-transaction.getAmount());
