@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0c8fbd1b-7ff8-4c99-812f-bee2ace10a5e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/Model/TransactionFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/Service/CommitTransactionService.java" afterPath="$PROJECT_DIR$/src/main/java/Service/CommitTransactionService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/Model/SerializableTransaction.java" afterPath="$PROJECT_DIR$/src/main/java/Model/SerializableTransaction.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/Model/Transaction.java" afterPath="$PROJECT_DIR$/src/main/java/Model/Transaction.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/Model/Database.java" afterPath="$PROJECT_DIR$/src/main/java/Model/Database.java" />
     </list>
     <ignored path="Revolut.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -33,20 +29,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Account.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/Model/Account.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="990">
-              <caret line="27" column="8" selection-start-line="27" selection-start-column="8" selection-end-line="27" selection-end-column="8" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#611#612#0" expanded="true" />
-                <element signature="e#647#648#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="CommitTransactionService.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/Service/CommitTransactionService.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -133,14 +115,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TransferVerticle.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="TransferVerticle.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/TransferVerticle.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.48913044" vertical-offset="285" max-vertical-offset="1005">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1005">
               <caret line="34" column="25" selection-start-line="34" selection-start-column="25" selection-end-line="34" selection-end-column="25" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
                 <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Database.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/Model/Database.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.67391306" vertical-offset="395" max-vertical-offset="2040">
+              <caret line="47" column="8" selection-start-line="47" selection-start-column="8" selection-end-line="47" selection-end-column="8" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <marker date="1455260724000" expanded="true" signature="356:409" placeholder="UPDATE TRANS..." />
+                <marker date="1455260724000" expanded="true" signature="482:743" placeholder="CREATE TABLE..ACCOUNTS..." />
+                <marker date="1455260724000" expanded="true" signature="820:1172" placeholder="CREATE TABLE..TRANSACTIONS..." />
+                <marker date="1455260724000" expanded="true" signature="1240:1273" placeholder="INSERT INTO ..." />
+                <marker date="1455260724000" expanded="true" signature="1345:1388" placeholder="INSERT INTO ..." />
               </folding>
             </state>
           </provider>
@@ -195,11 +194,11 @@
         <option value="$PROJECT_DIR$/src/main/java/Model/AccountFactory.java" />
         <option value="$PROJECT_DIR$/src/test/java/RevolutTransferTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/Service/CreateTransactionService.java" />
-        <option value="$PROJECT_DIR$/src/main/java/Model/Database.java" />
         <option value="$PROJECT_DIR$/src/main/java/Model/SerializableTransaction.java" />
         <option value="$PROJECT_DIR$/src/main/java/Model/TransactionFactory.java" />
         <option value="$PROJECT_DIR$/src/main/java/Service/CommitTransactionService.java" />
         <option value="$PROJECT_DIR$/src/main/java/Model/Transaction.java" />
+        <option value="$PROJECT_DIR$/src/main/java/Model/Database.java" />
       </list>
     </option>
   </component>
@@ -880,12 +879,12 @@
       <created>1454875653645</created>
       <option name="number" value="Default" />
       <updated>1454875653645</updated>
-      <workItem from="1454875658494" duration="52820000" />
+      <workItem from="1454875658494" duration="52993000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="52820000" />
+    <option name="totallyTimeSpent" value="52993000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
@@ -912,7 +911,7 @@
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.309375" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.234375" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.234375" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3287483" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1123,21 +1122,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/Model/Database.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="680" max-vertical-offset="2025">
-          <caret line="60" column="42" selection-start-line="60" selection-start-column="42" selection-end-line="60" selection-end-column="42" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <marker date="1455235681000" expanded="true" signature="-1:-1" placeholder="UPDATE TRANS..." />
-            <marker date="1455235681000" expanded="true" signature="-1:-1" placeholder="CREATE TABLE..ACCOUNTS..." />
-            <marker date="1455235681000" expanded="true" signature="-1:-1" placeholder="CREATE TABLE..TRANSACTIONS..." />
-            <marker date="1455235681000" expanded="true" signature="-1:-1" placeholder="INSERT INTO ..." />
-            <marker date="1455235681000" expanded="true" signature="-1:-1" placeholder="INSERT INTO ..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/Model/AccountFactory.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="345">
@@ -1232,11 +1216,26 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/TransferVerticle.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.48913044" vertical-offset="285" max-vertical-offset="1005">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1005">
           <caret line="34" column="25" selection-start-line="34" selection-start-column="25" selection-end-line="34" selection-end-column="25" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/Model/Database.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.67391306" vertical-offset="395" max-vertical-offset="2040">
+          <caret line="47" column="8" selection-start-line="47" selection-start-column="8" selection-end-line="47" selection-end-column="8" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <marker date="1455260724000" expanded="true" signature="356:409" placeholder="UPDATE TRANS..." />
+            <marker date="1455260724000" expanded="true" signature="482:743" placeholder="CREATE TABLE..ACCOUNTS..." />
+            <marker date="1455260724000" expanded="true" signature="820:1172" placeholder="CREATE TABLE..TRANSACTIONS..." />
+            <marker date="1455260724000" expanded="true" signature="1240:1273" placeholder="INSERT INTO ..." />
+            <marker date="1455260724000" expanded="true" signature="1345:1388" placeholder="INSERT INTO ..." />
           </folding>
         </state>
       </provider>

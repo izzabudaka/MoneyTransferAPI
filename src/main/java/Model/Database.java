@@ -49,6 +49,7 @@ public class Database {
             }
             createAccountsTable();
             createTransactionsTable();
+            initialised = true;
         } else {
             logger.debug("Database already initialised");
         }
