@@ -18,6 +18,7 @@ public class Transaction {
     private final int    receiver;
     private final int    sender;
     private final double amount;
+    // Primary Key
     private final int    id;
 
     private final String transactionInfoExpr =
@@ -41,7 +42,7 @@ public class Transaction {
             PreparedStatement statement = Database.getStatement(transactionInfoExpr);
             statement.setInt(1, id);
             ResultSet resultSet         = Database.selectStatement(statement);
-            if(resultSet.next()){
+            if(resultSet.next()) {
                 this.sender                 = resultSet.getInt(1);
                 this.receiver               = resultSet.getInt(2);
                 this.amount                 = resultSet.getInt(3);
@@ -53,6 +54,7 @@ public class Transaction {
         }
     }
 
+    @Deprecated
     public Transaction(){
         this.receiver = 0;
         this.sender   = 0;

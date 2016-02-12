@@ -12,9 +12,11 @@ public class CommitTransactionService implements CommitTransaction {
     private final static Logger logger = Logger.getLogger(Database.class);
     private String message;
     private final AccountFactory accountFactory;
+    private final TransactionFactory transactionFactory;
 
     public CommitTransactionService(){
         accountFactory = new AccountFactory();
+        transactionFactory = new TransactionFactory();
     }
 
     private void setMessage(String message){
@@ -23,7 +25,7 @@ public class CommitTransactionService implements CommitTransaction {
     }
 
     public String commitTransaction(int transactionId) throws SQLException {
-        Transaction transaction = new Transaction(transactionId);
+        Transaction transaction = transactionFactory.getTransactionFromDatabase(transactionId);
 
         if(transaction.getState() == TransactionState.COMMITED){
             setMessage(String.format("Transaction %d already commited!", transactionId));

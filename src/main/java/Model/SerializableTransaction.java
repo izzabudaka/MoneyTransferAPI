@@ -14,6 +14,7 @@ public class SerializableTransaction {
         this.amount   = amount;
     }
 
+    @Deprecated
     public SerializableTransaction(){
         this.receiver = 0;
         this.sender   = 0;
